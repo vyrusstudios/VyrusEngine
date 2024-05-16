@@ -8,6 +8,8 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxSort;
+import flixel.util.FlxColor;
+import flixel.FlxSprite;
 import funkin.play.notes.NoteHoldCover;
 import funkin.play.notes.NoteSplash;
 import funkin.play.notes.NoteSprite;
@@ -16,6 +18,7 @@ import funkin.data.song.SongData.SongNoteData;
 import funkin.ui.options.PreferencesMenu;
 import funkin.util.SortUtil;
 import funkin.modding.events.ScriptEvent;
+import funkin.save.Save;
 
 /**
  * A group of sprites which handles the receptor, the note splashes, and the notes (with sustains) for a given player.
@@ -95,12 +98,24 @@ class Strumline extends FlxSpriteGroup
 
   var heldKeys:Array<Bool> = [];
 
+  var accessibilityBackground:FlxSprite;
+
   public function new(noteStyle:NoteStyle, isPlayer:Bool)
   {
     super();
 
     this.isPlayer = isPlayer;
     this.noteStyle = noteStyle;
+
+    if (Save.instance.options.strumBG)
+    {
+      this.accessibilityBackground = new FlxSprite();
+      this.accessibilityBackground.makeGraphic(120 * DIRECTIONS.length, FlxG.height, FlxColor.BLACK);
+      this.accessibilityBackground.x -= 20;
+      this.accessibilityBackground.alpha = 0.5;
+      this.accessibilityBackground.zIndex = -1;
+      this.add(this.accessibilityBackground);
+    }
 
     this.strumlineNotes = new FlxTypedSpriteGroup<StrumlineNote>();
     this.strumlineNotes.zIndex = 10;

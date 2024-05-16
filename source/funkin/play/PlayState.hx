@@ -331,6 +331,11 @@ class PlayState extends MusicBeatSubState
    */
   public var disableKeys:Bool = false;
 
+  /**
+   * Tells the game if ghostTapping is enabled.
+   */
+  public var ghostTap:Bool = true;
+
   public var isSubState(get, never):Bool;
 
   function get_isSubState():Bool
@@ -646,6 +651,10 @@ class PlayState extends MusicBeatSubState
     this.persistentUpdate = true;
     // This state receives draw calls even when a substate is active.
     this.persistentDraw = true;
+
+    // Set ghostTap to Save.ghostTap
+    this.ghostTap = Save.instance.options.ghostTap;
+    trace('Ghost Tapping is set to ' + ghostTap);
 
     // Stop any pre-existing music.
     if (!overrideMusic && FlxG.sound.music != null) FlxG.sound.music.stop();
@@ -1459,6 +1468,13 @@ class PlayState extends MusicBeatSubState
     // Make the characters dance on the beat
     danceOnBeat();
 
+    // Make `scoreText` do a lil jig :)
+    if (scoreText != null)
+    {
+      scoreText.scale.x = 1.075;
+      scoreText.scale.y = 1.075;
+      FlxTween.tween(scoreText.scale, {x: 1, y: 1}, 0.2);
+    }
     return true;
   }
 
@@ -1530,13 +1546,15 @@ class PlayState extends MusicBeatSubState
       'healthLerp', 0, 2);
     healthBar.scrollFactor.set();
     healthBar.createFilledBar(Constants.COLOR_HEALTH_BAR_RED, Constants.COLOR_HEALTH_BAR_GREEN);
+    healthBar.screenCenter(X);
     healthBar.zIndex = 801;
     add(healthBar);
 
     // The score text below the health bar.
-    scoreText = new FlxText(healthBarBG.x + healthBarBG.width - 190, healthBarBG.y + 30, 0, '', 20);
-    scoreText.setFormat(Paths.font('vcr.ttf'), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+    scoreText = new FlxText(0, healthBarBG.y + 45, FlxG.width, '', 20);
+    scoreText.setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
     scoreText.scrollFactor.set();
+    scoreText.borderSize = 1.25;
     scoreText.zIndex = 802;
     add(scoreText);
 
@@ -2024,7 +2042,9 @@ class PlayState extends MusicBeatSubState
     }
     else
     {
-      scoreText.text = 'Score:' + songScore;
+      var diff:String = currentDifficulty.substr(0, 1).toUpperCase() + currentDifficulty.substr(1);
+
+      scoreText.text = currentChart.songName + ' - ' + diff + ' | Misses: ' + Highscore.tallies.missed + ' | Score:' + songScore;
     }
   }
 
@@ -2334,7 +2354,7 @@ class PlayState extends MusicBeatSubState
 
       var notesInDirection:Array<NoteSprite> = notesByDirection[input.noteDirection];
 
-      if (!Constants.GHOST_TAPPING && notesInDirection.length == 0)
+      if (!ghostTap && notesInDirection.length == 0)
       {
         // Pressed a wrong key with no notes nearby.
         // Perform a ghost miss (anti-spam).
@@ -2343,7 +2363,7 @@ class PlayState extends MusicBeatSubState
         // Play the strumline animation.
         playerStrumline.playPress(input.noteDirection);
       }
-      else if (Constants.GHOST_TAPPING && (holdNotesInRange.length + notesInRange.length > 0) && notesInDirection.length == 0)
+      else if (ghostTap && (holdNotesInRange.length + notesInRange.length > 0) && notesInDirection.length == 0)
       {
         // Pressed a wrong key with no notes nearby AND with notes in a different direction available.
         // Perform a ghost miss (anti-spam).

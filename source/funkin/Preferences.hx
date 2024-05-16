@@ -45,6 +45,21 @@ class Preferences
     return value;
   }
 
+  public static var strumBG(get, set):Bool;
+
+  static function get_strumBG():Bool
+  {
+    return Save?.instance?.options?.strumBG;
+  }
+
+  static function set_strumBG(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.strumBG = value;
+    save.flush();
+    return value;
+  }
+
   /**
    * If disabled, flashing lights in the main menu and other areas will be less intense.
    * @default `true`
@@ -103,6 +118,25 @@ class Preferences
 
     var save = Save.instance;
     save.options.debugDisplay = value;
+    save.flush();
+    return value;
+  }
+
+  /**
+   * if enabled, ghost tapping will be enabled.
+   * @default 'true'
+   */
+  public static var ghostTap(get, set):Bool;
+
+  static function get_ghostTap():Bool
+  {
+    return Save?.instance?.options?.ghostTap ?? true;
+  }
+
+  static function set_ghostTap(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.ghostTap = value;
     save.flush();
     return value;
   }

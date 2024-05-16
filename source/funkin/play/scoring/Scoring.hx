@@ -121,7 +121,7 @@ class Scoring
    */
   public static final PBOT1_GOOD_THRESHOLD:Float = 90.0;
 
-  /**
+  /**wew
    * The time within which a note is considered to have been hit with the Bad judgement.
    * `~85% of the hit window, or 135ms`
    */

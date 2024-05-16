@@ -55,6 +55,9 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Downscroll', 'Enable to make notes move downwards', function(value:Bool):Void {
       Preferences.downscroll = value;
     }, Preferences.downscroll);
+    createPrefItemCheckbox('Strum Background', 'Enables to make the notes pop from the background.', function(value:Bool):Void {
+      Preferences.strumBG = value;
+    }, Preferences.strumBG);
     createPrefItemCheckbox('Flashing Lights', 'Disable to dampen flashing effects', function(value:Bool):Void {
       Preferences.flashingLights = value;
     }, Preferences.flashingLights);
@@ -67,6 +70,9 @@ class PreferencesMenu extends Page
     createPrefItemCheckbox('Auto Pause', 'Automatically pause the game when it loses focus', function(value:Bool):Void {
       Preferences.autoPause = value;
     }, Preferences.autoPause);
+    createPrefItemCheckbox('Ghost Tapping', 'Enable ghost tapping, spam those keys!', function(value:Bool):Void {
+      Preferences.ghostTap = value;
+    }, Preferences.ghostTap);
   }
 
   function createPrefItemCheckbox(prefName:String, prefDesc:String, onChange:Bool->Void, defaultValue:Bool):Void
